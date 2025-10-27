@@ -40,8 +40,7 @@ def main(page: ft.Page):
     input_marca=ft.TextField(label='Marca', width=120)
     input_modello=ft.TextField(label='Modello', width=120)
     input_anno=ft.TextField(label='Anno', width=120)
-
-    posti_contatore=ft.TextField(width=120, disabled=True, text_align=ft.TextAlign.CENTER, text_size=18)
+    posti_contatore=ft.TextField(width=120, disabled=True, text_align=ft.TextAlign.CENTER, text_size=18, value='1')
     # TODO
 
     # --- FUNZIONI APP ---
@@ -64,13 +63,13 @@ def main(page: ft.Page):
         page.update()
 
     # Handlers per la gestione dei bottoni utili all'inserimento di una nuova auto
-    posti_contatore.value=0
+    posti_contatore.value=1
 
     def incrementa(e):
         try:
-            valore_corrente=posti_contatore.value
+            valore_corrente=int(posti_contatore.value)
             valore_corrente += 1
-            posti_contatore.value=valore_corrente
+            posti_contatore.value=str(valore_corrente)
             posti_contatore.update()
 
         except ValueError:
@@ -78,11 +77,11 @@ def main(page: ft.Page):
 
     def decrementa(e):
         try:
-            valore_corrente=posti_contatore.value # inizialmente è 0
+            valore_corrente=int(posti_contatore.value) # inizialmente è 0
 
-            if valore_corrente > 0:
+            if valore_corrente > 1:
                 valore_corrente -= 1 # decremento di uno se è maggiore di zero
-                posti_contatore.value=valore_corrente
+                posti_contatore.value=str(valore_corrente)
                 posti_contatore.update()
             else:
                 alert.show_alert('❌ Il numero minimo di posti non può essere negativo o uguale a zero')
@@ -97,6 +96,9 @@ def main(page: ft.Page):
             anno = int(input_anno.value)
             posti= int(posti_contatore.value)
 
+            if posti <= 0:
+                raise ValueError("Il numero di posti deve essere almeno 1.")
+
             autonoleggio.aggiungi_automobile(marca, modello, anno, posti)  # chiamo il metodo dell'oggetto autonoleggio
 
             aggiorna_lista_auto() # chiamo la funzione che aggiorna la lista delle auto
@@ -104,7 +106,7 @@ def main(page: ft.Page):
             input_marca.value=''
             input_modello.value=''
             input_anno.value=''
-            posti_contatore.value=0
+            posti_contatore.value='1'
             page.update()
             alert.show_alert('✅ Automobile aggiunta con successo')
 
@@ -119,8 +121,8 @@ def main(page: ft.Page):
     pulsante_conferma_responsabile = ft.ElevatedButton("Conferma", on_click=conferma_responsabile)
 
     # Bottoni per la gestione dell'inserimento di una nuova auto
-    btn_plus=ft.IconButton(ft.Icons.ADD, on_click=incrementa)
-    btn_minus=ft.IconButton(ft.Icons.REMOVE, on_click=decrementa)
+    btn_plus=ft.IconButton(ft.Icons.ADD, on_click=incrementa, icon_color='red')
+    btn_minus=ft.IconButton(ft.Icons.REMOVE, on_click=decrementa, icon_color='green')
     # TODO
 
     # --- LAYOUT ---
