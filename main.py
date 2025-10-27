@@ -13,7 +13,7 @@ def main(page: ft.Page):
     alert = AlertManager(page)
 
     # --- LA LOGICA DELL'APPLICAZIONE E' PRESA DALL'AUTONOLEGGIO DEL LAB03 ---
-    autonoleggio = Autonoleggio("Polito Rent", "Alessandro Visconti")
+    autonoleggio = Autonoleggio("Polito Rent", "Alessandro Visconti") # creazione dell'oggetto della classe Autonoleggio
     try:
         autonoleggio.carica_file_automobili(FILE_AUTO) # Carica il file
     except Exception as e:
@@ -36,6 +36,10 @@ def main(page: ft.Page):
     lista_auto = ft.ListView(expand=True, spacing=5, padding=10, auto_scroll=True)
 
     # Tutti i TextField per le info necessarie per aggiungere una nuova automobile (marca, modello, anno, contatore posti)
+    input_marca=ft.TextField(label='Marca', width=120)
+    input_modello=ft.TextField(label='Modello', width=120)
+    input_anno=ft.TextField(label='Anno', width=120)
+    input_posti=ft.TextField(label='Posti', width=120)
     # TODO
 
     # --- FUNZIONI APP ---
