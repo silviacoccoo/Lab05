@@ -5,6 +5,7 @@ from autonoleggio import Autonoleggio
 FILE_AUTO = "automobili.csv"
 
 def main(page: ft.Page):
+    #  gestione dell'aspetto della page
     page.title = "Lab05"
     page.horizontal_alignment = "center"
     page.theme_mode = ft.ThemeMode.DARK
@@ -39,7 +40,8 @@ def main(page: ft.Page):
     input_marca=ft.TextField(label='Marca', width=120)
     input_modello=ft.TextField(label='Modello', width=120)
     input_anno=ft.TextField(label='Anno', width=120)
-    input_posti=ft.TextField(label='Posti', width=120)
+
+    posti_contatore=ft.TextField(width=120, disabled=True, text_align=ft.TextAlign.CENTER, text_size=18)
     # TODO
 
     # --- FUNZIONI APP ---
@@ -62,13 +64,63 @@ def main(page: ft.Page):
         page.update()
 
     # Handlers per la gestione dei bottoni utili all'inserimento di una nuova auto
-    # TODO
+    posti_contatore.value=0
+
+    def incrementa(e):
+        try:
+            valore_corrente=posti_contatore.value
+            valore_corrente += 1
+            posti_contatore.value=valore_corrente
+            posti_contatore.update()
+
+        except ValueError:
+            alert.show_alert('❌ Inserire valori numerici nel campo posti')
+
+    def decrementa(e):
+        try:
+            valore_corrente=posti_contatore.value # inizialmente è 0
+
+            if valore_corrente > 0:
+                valore_corrente -= 1 # decremento di uno se è maggiore di zero
+                posti_contatore.value=valore_corrente
+                posti_contatore.update()
+            else:
+                alert.show_alert('❌ Il numero minimo di posti non può essere negativo o uguale a zero')
+        except ValueError:
+            alert.show_alert('❌ Inserire valori numerici nel campo posti')
+
+    def aggiungi_automobile_handler(e):
+        try:
+            # recuperiamo il valore inserito
+            marca = input_marca.value
+            modello = input_modello.value
+            anno = int(input_anno.value)
+            posti= int(posti_contatore.value)
+
+            autonoleggio.aggiungi_automobile(marca, modello, anno, posti)  # chiamo il metodo dell'oggetto autonoleggio
+
+            aggiorna_lista_auto() # chiamo la funzione che aggiorna la lista delle auto
+
+            input_marca.value=''
+            input_modello.value=''
+            input_anno.value=''
+            posti_contatore.value=0
+            page.update()
+            alert.show_alert('✅ Automobile aggiunta con successo')
+
+        except ValueError: # la conversione a int può generare errore
+            alert.show_alert('❌ Errore: inserire valori numerici per anno e posti')
+        except Exception as error:
+            alert.show_alert(f'❌ Errore: {error}')
+            # TODO
 
     # --- EVENTI ---
     toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=cambia_tema)
     pulsante_conferma_responsabile = ft.ElevatedButton("Conferma", on_click=conferma_responsabile)
 
     # Bottoni per la gestione dell'inserimento di una nuova auto
+    btn_plus=ft.IconButton(ft.Icons.ADD, on_click=incrementa)
+    btn_minus=ft.IconButton(ft.Icons.REMOVE, on_click=decrementa)
     # TODO
 
     # --- LAYOUT ---
@@ -87,6 +139,14 @@ def main(page: ft.Page):
                alignment=ft.MainAxisAlignment.CENTER),
 
         # Sezione 3
+        ft.Divider(),
+        ft.Text('Aggiungi automobile', size=20, weight=ft.FontWeight.BOLD),
+        ft.Row(spacing=10,
+               controls=[input_marca, input_modello, input_anno, ft.Row(spacing=0,
+                                                                        controls=[btn_minus, posti_contatore, btn_plus],
+                                                                        alignment=ft.MainAxisAlignment.CENTER)],
+               alignment=ft.MainAxisAlignment.CENTER),
+        ft.ElevatedButton("Aggiungi automobile", on_click=aggiungi_automobile_handler),
         # TODO
 
         # Sezione 4
